@@ -9,7 +9,7 @@ pipeline {
     stage('Validate Parameters') {
       steps {
         script {
-          // Ensure Docker image parameter is provided
+          // Check if the DOCKER_IMAGE parameter is provided
           if (!params.DOCKER_IMAGE?.trim()) {
             error "The parameter 'DOCKER_IMAGE' is required but not provided."
           }
