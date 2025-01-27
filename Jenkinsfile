@@ -5,11 +5,12 @@ pipeline {
     stage('Validate Parameters') {
       steps {
         script {
-          // Make sure DOCKER_IMAGE is set correctly from environment variables
-          env.DOCKER_IMAGE = "${env.DOCKER_REPO_NAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_TAG}"
-          if (!env.DOCKER_IMAGE?.trim()) {
-            error "The Docker image name is required but not provided."
+          // Check if environment variables are set
+          if (!env.DOCKER_REPO_NAME || !env.DOCKER_IMAGE_NAME || !env.DOCKER_TAG) {
+            error "Environment variables DOCKER_REPO_NAME, DOCKER_IMAGE_NAME, and DOCKER_TAG are not set."
           }
+          // Construct the Docker image name
+          env.DOCKER_IMAGE = "${env.DOCKER_REPO_NAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_TAG}"
           echo "Using Docker image: ${env.DOCKER_IMAGE}"  // Debugging line
         }
       }
