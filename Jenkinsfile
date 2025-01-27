@@ -29,22 +29,25 @@
  # }
 #}
 
-
 pipeline {
   agent any
 
   parameters {
-    string(name: 'DOCKER_IMAGE', defaultValue: '', description: 'Enter the Docker image name (e.g., my-repo/my-flask-app:tag)')
+    string(name: 'DOCKER_IMAGE', defaultValue: '', description: 'Enter the full Docker image name (e.g., my-repo/my-flask-app:tag)')
   }
 
   stages {
-    stage('Pull Image') {
+    stage('Validate Parameters') {
       steps {
         script {
           if (!params.DOCKER_IMAGE?.trim()) {
-            error "DOCKER_IMAGE parameter is required."
+            error "The parameter 'DOCKER_IMAGE' is required but not provided."
           }
         }
+      }
+    }
+    stage('Pull Image') {
+      steps {
         withCredentials([usernamePassword(credentialsId: "${DOCKER_REGISTRY_CREDS}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
           sh """
             echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin docker.io
@@ -67,9 +70,9 @@ pipeline {
 
   post {
     always {
-      sh 'docker logout'
-      sh 'docker ps -q --filter "name=my-flask-app" | xargs --no-run-if-empty docker rm -f' // Cleanup if needed
+      sh 'docker logout || true'
+      sh 'docker ps -q --filter "name=my-flask-app" | xargs --no-run-if-empty docker rm -f || true'
     }
   }
 }
-   
+  
