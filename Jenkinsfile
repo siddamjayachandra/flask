@@ -42,17 +42,14 @@ pipeline {
     stage('Run') {
       steps {
         echo "Running container from image: ${params.DOCKER_IMAGE}"  // Debugging line
-        sh "docker run -d --name my-flask-app -p 5000:5000 ${params.DOCKER_IMAGE}"
+        sh "docker run -d --name -p 5000:5000 ${params.DOCKER_IMAGE}"
       }
     }
   }
 
   post {
     always {
-      echo "Logging out of Docker..."  // Debugging line
-      sh 'docker logout || true'
-      echo "Removing any running containers..."  // Debugging line
-      sh 'docker ps -q --filter "name=my-flask-app" | xargs --no-run-if-empty docker rm -f || true'
+      sh 'docker logout'
     }
   }
 }
