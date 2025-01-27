@@ -49,7 +49,10 @@ pipeline {
 
   post {
     always {
-      sh 'docker logout'
+      echo "Logging out of Docker..."  // Debugging line
+      sh 'docker logout || true'
+      echo "Removing any running containers..."  // Debugging line
+      sh 'docker ps -q --filter "name=siddamjayachandra/todo:latest" | xargs --no-run-if-empty docker rm -f || true'
     }
   }
 }
