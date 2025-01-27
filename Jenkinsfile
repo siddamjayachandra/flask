@@ -42,7 +42,7 @@ pipeline {
     stage('Run') {
       steps {
         echo "Running container from image: ${params.DOCKER_IMAGE}"  // Debugging line
-        sh "docker run -d --name -p 5000:5000 ${params.DOCKER_IMAGE}"
+        sh "docker run -p 5000:5000 ${params.DOCKER_IMAGE}"
       }
     }
   }
